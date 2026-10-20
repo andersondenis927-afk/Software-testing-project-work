@@ -1,4 +1,6 @@
 
+// Denis Anderson, Jekaterina Zasijenko, Allan Jajubovits
+
 *** Settings ***
 Library    SeleniumLibrary
 Library    Collections
