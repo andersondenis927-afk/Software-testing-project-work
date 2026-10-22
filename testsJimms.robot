@@ -23,6 +23,10 @@ ${first_product}    xpath=(//a[contains(@href,'/Product/Show/')])[1]
 ${cart_icon}    xpath=(//a[contains(@href,'cart') or contains(@href,'Cart') or contains(@href,'ostoskori') or contains(@aria-label,'Ostoskori') or contains(@title,'Ostoskori')])[1]
 ${add_to_cart}    xpath=//*[self::a or self::button or self::input][contains(normalize-space(.),'Lisää koriin') or @value='Lisää koriin' or @aria-label='Lisää koriin']
 ${body}    xpath=//body
+${faq_link}    xpath=//a[contains(normalize-space(.),'UKK')]
+${contact_link}    xpath=//a[contains(normalize-space(.),'Yhteystiedot')]
+${login_link}    xpath=//a[contains(normalize-space(.),'Kirjaudu')][1]
+${password_field}    xpath=//input[@type='password']
 
 *** Keywords ***
 Open Jimms
@@ -61,6 +65,16 @@ Open First Product
     Click Element    ${first_product}
     Sleep    3s
     Wait Until Page Contains Element    ${body}    ${timeout}
+
+Open Home And Click
+    [Arguments]    ${locator}
+    Go To    ${url}
+    Sleep    3s
+    Wait Until Element Is Visible    ${locator}    ${timeout}
+    Click Element    ${locator}
+    Sleep    3s
+    Wait Until Page Contains Element    ${body}    ${timeout}
+
 
 *** Test Cases ***
 Check Categories
@@ -119,3 +133,28 @@ Add To Cart
     ${cart_text}=    Get Text    ${body}
     Should Not Be Empty    ${cart_text}
     Capture Page Screenshot    ${screenshots}${/}cart_page.png
+
+
+FAQ Page Opens
+    [Documentation]    UKK link opens the FAQ page
+    [Tags]    ui    low
+    Open Home And Click    ${faq_link}
+    ${text}=    Get Text    ${body}
+    Should Contain    ${text}    UKK
+    Capture Page Screenshot    ${screenshots}${/}faq_page.png
+
+Contact Page Shows Info
+    [Documentation]    Yhteystiedot page contains contact details
+    [Tags]    ui    low
+    Open Home And Click    ${contact_link}
+    ${text}=    Get Text    ${body}
+    Should Contain    ${text}    Yhteystiedot
+    Should Be True    '@' in $text
+    Capture Page Screenshot    ${screenshots}${/}contact_page.png
+
+Login Form Has Fields
+    [Documentation]    Login form shows a password field. No login is done.
+    [Tags]    functional    medium
+    Open Home And Click    ${login_link}
+    Wait Until Page Contains Element    ${password_field}    ${timeout}
+    Capture Page Screenshot    ${screenshots}${/}login_form.png
