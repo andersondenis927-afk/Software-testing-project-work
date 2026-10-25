@@ -158,3 +158,35 @@ Login Form Has Fields
     Open Home And Click    ${login_link}
     Wait Until Page Contains Element    ${password_field}    ${timeout}
     Capture Page Screenshot    ${screenshots}${/}login_form.png
+
+Verify Jimm's Logo Redirects to Front Page
+    Go To   https://www.jimms.fi/fi/Product/Komponentit
+    Sleep   5s
+    Click Element   xpath:/html/body/header/div/div[2]/div/a/picture/img
+    Wait Until Location Is    https://www.jimms.fi/   timeout=10s
+    Sleep   3s
+
+Verify Product Prices Ascend After Sorting Low To High
+    Go To   https://www.jimms.fi/fi/Product/List/000-1SV/komponentit--emolevyt--amd-emolevyt--a520-am4
+    Sleep   3s
+    Click Element   xpath:/html/body/main/div[2]/div/div[2]/div[3]/div[1]/div/div/div[1]/div/button
+    Sleep   1s
+    Click Element   xpath:/html/body/main/div[2]/div/div[2]/div[3]/div[1]/div/div/div[1]/div/ul/li[7]/a
+    Sleep   3s
+    
+    ${price1}=    Get Text    xpath:/html/body/main/div[2]/div/div[2]/div[3]/div[4]/div/div[1]/product-box/div[2]/div[3]/div/span/span
+    ${price2}=    Get Text    xpath:/html/body/main/div[2]/div/div[2]/div[3]/div[4]/div/div[2]/product-box/div[2]/div[3]/div/span/span
+
+    ${price1}=     Remove String    ${price1}    €
+    ${price1}=     Strip String    ${price1}
+    ${price1}=    Replace String    ${price1}    ,    .
+    
+    ${price2}=     Remove String    ${price2}    €
+    ${price2}=     Strip String    ${price2}
+    ${price2}=    Replace String    ${price2}    ,    .
+
+    ${p1}=    Convert To Number    ${price1}
+    ${p2}=    Convert To Number    ${price2}
+    
+    Log To Console    Comparing Product 1 (${p1} €) <= Product 2 (${p2} €)
+    Should Be True    ${p1} <= ${p2}
